@@ -1,6 +1,6 @@
 # MaskImageGenerator
 
-This is a repository for creating mask images. Mask images can be used when processing noise.
+This is a repository for creating mask images. The mask images can be used when processing noise.
 
 # Requirements
 
@@ -103,6 +103,6 @@ height (int): The height of an image.
 * _width: int_
     * The width of an image; default is 256.
 
-* _left_to_right: bool_
+* _top_to_bottom: bool_
     * If True, from the top to bottom of an image, gradient changes color from black to white; if False, from the bottom to top, it does; default is True.
 
