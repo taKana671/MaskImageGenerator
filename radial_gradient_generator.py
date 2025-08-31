@@ -3,25 +3,25 @@ import numpy as np
 from utils import output_image
 
 
-BLACK = (0, 0, 0)
-WHITE = (255, 255, 255)
-
-
 class RadialGradient:
-    """A class to create radial gradient mask image.
+    """A class to generate radial gradient.
         Arges:
             height (int): The height of an image.
             width (int): The width of an image.
+            inner_color (tuple or list):
+                The starting color of gradient; values ranging from 0 to 255;
+                the number of elements must be the same as outer_color.
+            outer_color (tuple or list):
+                The end color of gradient; values ranging from 0 to 255;
+                the number of elements must be the same as inner_color.
+            gradient_size (float):
+                The larger the gradient_size, the smaller the circle of the gradient become.
             center_h (int): y-axis center; must be positive; heght // 2, if not specified.
             center_w (int): x-axis center; must be positive; width // 2, if not specified.
-            gradient_size (float): The larger the gradient_size, the smaller the
-            circle of the gradient become.
-            inner_color (tuple|list): A tuple or list of three elements, with values ranging from 0 to 255.
-            outer_color (tuple|list): A tuple or list of three elements, with values ranging from 0 to 255.
     """
 
-    def __init__(self, height=256, width=256, center_h=None, center_w=None,
-                 gradient_size=2, inner_color=BLACK, outer_color=WHITE):
+    def __init__(self, height, width, inner_color, outer_color,
+                 gradient_size=2, center_h=None, center_w=None):
         self.height = height
         self.width = width
         self.gradient_size = gradient_size
@@ -31,6 +31,7 @@ class RadialGradient:
 
         self.center = self.define_center(center_h, center_w)
         self.max_length = max(self.height, self.width)
+        self.channels = len(self.inner_color)
 
     def define_center(self, center_h, center_w):
         center = np.zeros(2)
@@ -58,7 +59,7 @@ class RadialGradient:
         if dist >= 1:
             return self.outer_color
 
-        rgb = [self.outer_color[i] * dist + self.inner_color[i] * (1 - dist) for i in range(3)]
+        rgb = [self.outer_color[i] * dist + self.inner_color[i] * (1 - dist) for i in range(self.channels)]
         return rgb
 
     def get_gradient_array(self):
@@ -67,93 +68,109 @@ class RadialGradient:
                 for y in range(self.height)
                 for x in range(self.width)]
         )
-        arr = arr.reshape(self.height, self.width, 3)
+        arr = arr.reshape(self.height, self.width, self.channels)
         return arr
 
+    def output(self, arr, img_type, output_dir=None):
+        arr = np.clip(arr * 255, a_min=0, a_max=255).astype(np.uint8)
+        output_image(arr, img_type, output_dir)
+
     @staticmethod
-    def output_image(height=256, width=256, center_h=None, center_w=None, gradient_size=2,
-                     inner_color=BLACK, outer_color=WHITE, output_dir=None):
+    def output_image(inner_color, outer_color, height=256, width=256,
+                     gradient_size=2, center_h=None, center_w=None):
         generator = RadialGradient(
+            inner_color=inner_color,
+            outer_color=outer_color,
             height=height,
             width=width,
+            gradient_size=gradient_size,
             center_h=center_h,
             center_w=center_w,
-            gradient_size=gradient_size,
-            inner_color=inner_color,
-            outer_color=outer_color
         )
 
         arr = generator.get_gradient_array()
-        output_image(arr, 'radial_gradient', output_dir)
+        generator.output(arr, 'color_radial_gradient')
 
 
-class TransparentRadialGradient(RadialGradient):
-    """A class to create transparent radial gradient mask image.
+class RadialGradientMask(RadialGradient):
+    """A class to generate black and white radial gradient.
         Arges:
             height (int): The height of an image.
             width (int): The width of an image.
             center_h (int): y-axis center; must be positive; heght // 2, if not specified.
             center_w (int): x-axis center; must be positive; width // 2, if not specified.
-            gradient_size (float): The larger the gradient_size, the smaller the
-            circle of the gradient become.
-            inner_color (tuple|list): A tuple or list of three elements, with values ranging from 0 to 255.
-            outer_color (tuple|list): A tuple or list of three elements, with values ranging from 0 to 255.
-            inner_alpha (int): Alpha value at the start of the transparent gradient, with values ranging from 0 to 255.
-            outer_alpha (int): Alpha value at the end of the transparent gradient, with values ranging from 0 to 255.
+            gradient_size (float):
+                The larger the gradient_size, the smaller the circle of the gradient become.
     """
 
-    def __init__(self, height=256, width=256, center_h=None, center_w=None, gradient_size=2,
-                 inner_color=BLACK, outer_color=WHITE, inner_alpha=255, outer_alpha=0):
+    def __init__(self, height=256, width=256, center_h=None, center_w=None,
+                 gradient_size=2, inner_to_outer=True):
         super().__init__(
             height=height,
             width=width,
-            center_h=center_h,
-            center_w=center_w,
+            inner_color=(0, 0, 0) if inner_to_outer else (255, 255, 255),
+            outer_color=(255, 255, 255) if inner_to_outer else (0, 0, 0),
             gradient_size=gradient_size,
-            inner_color=inner_color,
-            outer_color=outer_color
+            center_h=center_h,
+            center_w=center_w
         )
-        # Change color range.
-        self.inner_alpha = inner_alpha / 255
-        self.outer_alpha = outer_alpha / 255
-
-    def get_gradient(self, x, y):
-        dist = self.get_distance(x, y)
-
-        if dist >= 1:
-            return (*self.outer_color, self.outer_alpha)
-
-        rgb = [self.outer_color[i] * dist + self.inner_color[i] * (1 - dist) for i in range(3)]
-        alpha = self.inner_alpha * (1 - dist)
-        return (*rgb, alpha)
-
-    def get_gradient_array(self):
-        arr = np.array(
-            [self.get_gradient(x, y)
-                for y in range(self.height)
-                for x in range(self.width)]
-        )
-        arr = arr.reshape(self.height, self.width, 4)
-        return arr
 
     @staticmethod
-    def output_image(height=256, width=256, center_h=None, center_w=None, gradient_size=2,
-                     inner_color=BLACK, outer_color=WHITE, inner_alpha=255, outer_alpha=0, output_dir=None):
-        generator = TransparentRadialGradient(
+    def output_image(height=256, width=256, center_h=None, center_w=None,
+                     gradient_size=2, inner_to_outer=True):
+        generator = RadialGradientMask(
             height=height,
             width=width,
             center_h=center_h,
             center_w=center_w,
             gradient_size=gradient_size,
-            inner_color=inner_color,
-            outer_color=outer_color,
-            inner_alpha=inner_alpha,
-            outer_alpha=outer_alpha
+            inner_to_outer=inner_to_outer
         )
 
         arr = generator.get_gradient_array()
-        output_image(arr, 'transparent_radial_gradient', output_dir)
+        generator.output(arr, 'radial_gradient')
 
 
-if __name__ == '__main__':
-    RadialGradient.output_image()
+class TransparentRadialGradientMask(RadialGradient):
+    """A class to generate black and white transparent radial gradient.
+        Arges:
+            height (int): The height of an image.
+            width (int): The width of an image.
+            center_h (int): y-axis center; must be positive; heght // 2, if not specified.
+            center_w (int): x-axis center; must be positive; width // 2, if not specified.
+            gradient_size (float):
+                The larger the gradient_size, the smaller the circle of the gradient become.
+    """
+
+    def __init__(self, height=256, width=256, center_h=None, center_w=None,
+                 gradient_size=2, inner_to_outer=True):
+        super().__init__(
+            height=height,
+            width=width,
+            inner_color=(0, 0, 0, 255) if inner_to_outer else (255, 255, 255, 0),
+            outer_color=(255, 255, 255, 0) if inner_to_outer else (0, 0, 0, 255),
+            gradient_size=gradient_size,
+            center_h=center_h,
+            center_w=center_w
+        )
+
+    @staticmethod
+    def output_image(height=256, width=256, center_h=None, center_w=None,
+                     gradient_size=2, inner_to_outer=True):
+        generator = TransparentRadialGradientMask(
+            height=height,
+            width=width,
+            center_h=center_h,
+            center_w=center_w,
+            gradient_size=gradient_size,
+            inner_to_outer=inner_to_outer
+        )
+
+        arr = generator.get_gradient_array()
+        generator.output(arr, 'transparent_radial_gradient')
+
+
+# if __name__ == '__main__':
+    # RadialGradient.output_image(inner_color=(255, 255, 0), outer_color=(255, 0, 0))
+    # RadialGradientMask.output_image()
+    # TransparentRadialGradientMask.output_image(inner_to_outer=False, gradient_size=3, center_w=0)
