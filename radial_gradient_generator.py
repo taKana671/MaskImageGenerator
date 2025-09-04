@@ -1,6 +1,6 @@
 import numpy as np
 
-from utils import output_image
+from .utils import output_image
 
 
 class RadialGradient:
@@ -101,6 +101,9 @@ class RadialGradientMask(RadialGradient):
             center_w (int): x-axis center; must be positive; width // 2, if not specified.
             gradient_size (float):
                 The larger the gradient_size, the smaller the circle of the gradient become.
+            inner_to_outer (bool):
+                If True, from the center to edges of an image, gradient changes color
+                from black to white; if False, from the edges to center, it does.
     """
 
     def __init__(self, height=256, width=256, center_h=None, center_w=None,
@@ -140,6 +143,9 @@ class TransparentRadialGradientMask(RadialGradient):
             center_w (int): x-axis center; must be positive; width // 2, if not specified.
             gradient_size (float):
                 The larger the gradient_size, the smaller the circle of the gradient become.
+            inner_to_outer (bool):
+                If True, from the center to edges of an image, gradient changes color
+                from black to transparent white; if False, from the edges to center, it does.
     """
 
     def __init__(self, height=256, width=256, center_h=None, center_w=None,
@@ -171,6 +177,6 @@ class TransparentRadialGradientMask(RadialGradient):
 
 
 # if __name__ == '__main__':
-    # RadialGradient.output_image(inner_color=(255, 255, 0), outer_color=(255, 0, 0))
+    # RadialGradient.output_image()
     # RadialGradientMask.output_image()
-    # TransparentRadialGradientMask.output_image(inner_to_outer=False, gradient_size=3, center_w=0)
+    # TransparentRadialGradientMask.output_image()

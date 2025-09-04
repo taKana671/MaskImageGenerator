@@ -1,6 +1,6 @@
 import numpy as np
 
-from utils import output_image
+from .utils import output_image
 
 
 class LinearGradient:
@@ -150,3 +150,10 @@ class TransparentVerticalGradientMask(LinearGradient):
         generator = TransparentVerticalGradientMask(height, width, top_to_bottom)
         arr = generator.get_gradient_3d()
         output_image(arr, 'trans_vertical_gradient')
+
+
+# if __name__ == '__main__':
+#     HorizontalGradientMask.output_image()
+#     TransparentHorizontalGradientMask.output_image()
+#     VerticalGradientMask.output_image()
+#     TransparentVerticalGradientMask.output_image()
