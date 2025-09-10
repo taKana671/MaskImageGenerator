@@ -29,28 +29,39 @@ class RadialGradient:
         self.inner_color = [v / 255 for v in inner_color]
         self.outer_color = [v / 255 for v in outer_color]
 
-        self.center = self.define_center(center_h, center_w)
+        self._center = np.zeros(2)
+        self.center_w = center_w
+        self.center_h = center_h
+
         self.max_length = max(self.height, self.width)
         self.channels = len(self.inner_color)
 
-    def define_center(self, center_h, center_w):
-        center = np.zeros(2)
+    @property
+    def center_w(self):
+        return self._center[0]
 
+    @center_w.setter
+    def center_w(self, center_w):
         if center_w is None or not 0 <= center_w <= self.width:
-            center[0] = self.width // 2
+            self._center[0] = self.width // 2
         else:
-            center[0] = center_w
+            self._center[0] = center_w
 
+    @property
+    def center_h(self):
+        return self._center[1]
+
+    @center_h.setter
+    def center_h(self, center_h):
         if center_h is None or not 0 <= center_h <= self.height:
-            center[1] = self.height // 2
+            self._center[1] = self.height // 2
         else:
-            center[1] = center_h
-
-        return center
+            self._center[1] = center_h
 
     def get_distance(self, x, y):
-        norm = ((x - self.center[0]) ** 2 + (y - self.center[1]) ** 2) ** 0.5
+        norm = ((x - self._center[0]) ** 2 + (y - self._center[1]) ** 2) ** 0.5
         dist_to_center = norm / (2 ** 0.5 * self.max_length / self.gradient_size)
+
         return dist_to_center
 
     def get_gradient(self, x, y):
