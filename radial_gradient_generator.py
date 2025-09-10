@@ -53,8 +53,6 @@ class RadialGradient:
 
     @center_h.setter
     def center_h(self, center_h):
-        print('setter is called!')
-
         if center_h is None or not 0 <= center_h <= self.height:
             self._center[1] = self.height // 2
         else:
@@ -63,6 +61,7 @@ class RadialGradient:
     def get_distance(self, x, y):
         norm = ((x - self._center[0]) ** 2 + (y - self._center[1]) ** 2) ** 0.5
         dist_to_center = norm / (2 ** 0.5 * self.max_length / self.gradient_size)
+
         return dist_to_center
 
     def get_gradient(self, x, y):
