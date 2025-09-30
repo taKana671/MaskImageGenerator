@@ -42,10 +42,11 @@ class LinearGradient:
         return arr
 
     @staticmethod
-    def output_image(height, width, start_color, end_color, is_horizontal):
+    def output_image(height, width, start_color, end_color, is_horizontal,
+                     output_dir=None, with_suffix=True):
         generator = LinearGradient(height, width, start_color, end_color, is_horizontal)
         arr = generator.get_gradient_3d()
-        output_image(arr, 'linear_gradient')
+        output_image(arr, 'linear_gradient', output_dir, with_suffix)
 
 
 class HorizontalGradientMask(LinearGradient):
@@ -68,10 +69,11 @@ class HorizontalGradientMask(LinearGradient):
         )
 
     @staticmethod
-    def output_image(height=256, width=256, left_to_right=True):
+    def output_image(height=256, width=256, left_to_right=True,
+                     output_dir=None, with_suffix=True):
         generator = HorizontalGradientMask(height, width, left_to_right)
         arr = generator.get_gradient_3d()
-        output_image(arr, 'horizontal_gradient')
+        output_image(arr, 'horizontal_gradient', output_dir, with_suffix)
 
 
 class TransparentHorizontalGradientMask(LinearGradient):
@@ -94,10 +96,11 @@ class TransparentHorizontalGradientMask(LinearGradient):
         )
 
     @staticmethod
-    def output_image(height=256, width=256, left_to_right=True):
+    def output_image(height=256, width=256, left_to_right=True,
+                     output_dir=None, with_suffix=True):
         generator = TransparentHorizontalGradientMask(height, width, left_to_right)
         arr = generator.get_gradient_3d()
-        output_image(arr, 'trans_horizontal_gradient')
+        output_image(arr, 'trans_horizontal_gradient', output_dir, with_suffix)
 
 
 class VerticalGradientMask(LinearGradient):
@@ -120,10 +123,11 @@ class VerticalGradientMask(LinearGradient):
         )
 
     @staticmethod
-    def output_image(height=256, width=256, top_to_bottom=True):
+    def output_image(height=256, width=256, top_to_bottom=True,
+                     output_dir=None, with_suffix=True):
         generator = VerticalGradientMask(height, width, top_to_bottom)
         arr = generator.get_gradient_3d()
-        output_image(arr, 'vertical_gradient')
+        output_image(arr, 'vertical_gradient', output_dir, with_suffix)
 
 
 class TransparentVerticalGradientMask(LinearGradient):
@@ -146,10 +150,11 @@ class TransparentVerticalGradientMask(LinearGradient):
         )
 
     @staticmethod
-    def output_image(height=256, width=256, top_to_bottom=True):
+    def output_image(height=256, width=256, top_to_bottom=True,
+                     output_dir=None, with_suffix=True):
         generator = TransparentVerticalGradientMask(height, width, top_to_bottom)
         arr = generator.get_gradient_3d()
-        output_image(arr, 'trans_vertical_gradient')
+        output_image(arr, 'trans_vertical_gradient', output_dir, with_suffix)
 
 
 # if __name__ == '__main__':

@@ -26,7 +26,8 @@ class Lines(ShapeMask):
 
     @staticmethod
     def output_image(coordinates, bg_color, line_color, line_thickness=5,
-                     height=256, width=256, gaussian_kernel=None):
+                     height=256, width=256, gaussian_kernel=None,
+                     output_dir=None, with_suffix=True):
         generator = Lines(bg_color, height, width)
         img = generator.create_bg_image()
         generator.create_lines(img, coordinates, line_color, line_thickness)
@@ -36,7 +37,7 @@ class Lines(ShapeMask):
 
         # change rgb to bgr.
         img = generator.change_rgb_to_bgr(img)
-        output_image(img, 'lines')
+        output_image(img, 'lines', output_dir, with_suffix)
 
 
 class LineMask(Lines):
@@ -63,7 +64,8 @@ class LineMask(Lines):
 
     @staticmethod
     def output_image(coordinates, line_thickness=5, height=256, width=256,
-                     gaussian_kernel=31, white_lines=True):
+                     gaussian_kernel=31, white_lines=True,
+                     output_dir=None, with_suffix=True):
         mask = LineMask(height, width, white_lines)
         img = mask.create_bg_image()
         mask.create_lines(img, coordinates, line_thickness)
@@ -71,7 +73,7 @@ class LineMask(Lines):
         if gaussian_kernel is not None:
             img = mask.blur(img, gaussian_kernel)
 
-        output_image(img, 'line_mask')
+        output_image(img, 'line_mask', output_dir, with_suffix)
 
 
 class TransparentLineMask(Lines):
@@ -99,7 +101,8 @@ class TransparentLineMask(Lines):
 
     @staticmethod
     def output_image(coordinates, line_thickness=5, height=256, width=256,
-                     gaussian_kernel=31, white_lines=True):
+                     gaussian_kernel=31, white_lines=True,
+                     output_dir=None, with_suffix=True):
         mask = TransparentLineMask(height, width, white_lines)
         img = mask.create_bg_image()
         mask.create_lines(img, coordinates, line_thickness)
@@ -107,4 +110,4 @@ class TransparentLineMask(Lines):
         if gaussian_kernel is not None:
             img = mask.blur(img, gaussian_kernel)
 
-        output_image(img, 'trans_line_mask')
+        output_image(img, 'trans_line_mask', output_dir, with_suffix)
