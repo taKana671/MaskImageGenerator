@@ -82,13 +82,14 @@ class RadialGradient:
         arr = arr.reshape(self.height, self.width, self.channels)
         return arr
 
-    def output(self, arr, img_type, output_dir=None):
+    def output(self, arr, img_type, output_dir=None, with_suffix=True):
         arr = np.clip(arr * 255, a_min=0, a_max=255).astype(np.uint8)
-        output_image(arr, img_type, output_dir)
+        output_image(arr, img_type, output_dir, with_suffix)
 
     @staticmethod
     def output_image(inner_color, outer_color, height=256, width=256,
-                     gradient_size=2, center_h=None, center_w=None):
+                     gradient_size=2, center_h=None, center_w=None,
+                     output_dir=None, with_suffix=True):
         generator = RadialGradient(
             inner_color=inner_color,
             outer_color=outer_color,
@@ -100,7 +101,7 @@ class RadialGradient:
         )
 
         arr = generator.get_gradient_array()
-        generator.output(arr, 'color_radial_gradient')
+        generator.output(arr, 'color_radial_gradient', output_dir, with_suffix)
 
 
 class RadialGradientMask(RadialGradient):
@@ -131,7 +132,7 @@ class RadialGradientMask(RadialGradient):
 
     @staticmethod
     def output_image(height=256, width=256, center_h=None, center_w=None,
-                     gradient_size=2, inner_to_outer=True):
+                     gradient_size=2, inner_to_outer=True, output_dir=None, with_suffix=True):
         generator = RadialGradientMask(
             height=height,
             width=width,
@@ -142,7 +143,7 @@ class RadialGradientMask(RadialGradient):
         )
 
         arr = generator.get_gradient_array()
-        generator.output(arr, 'radial_gradient')
+        generator.output(arr, 'radial_gradient', output_dir, with_suffix)
 
 
 class TransparentRadialGradientMask(RadialGradient):
@@ -173,7 +174,7 @@ class TransparentRadialGradientMask(RadialGradient):
 
     @staticmethod
     def output_image(height=256, width=256, center_h=None, center_w=None,
-                     gradient_size=2, inner_to_outer=True):
+                     gradient_size=2, inner_to_outer=True, output_dir=None, with_suffix=True):
         generator = TransparentRadialGradientMask(
             height=height,
             width=width,
@@ -184,7 +185,7 @@ class TransparentRadialGradientMask(RadialGradient):
         )
 
         arr = generator.get_gradient_array()
-        generator.output(arr, 'transparent_radial_gradient')
+        generator.output(arr, 'transparent_radial_gradient', output_dir, with_suffix)
 
 
 # if __name__ == '__main__':

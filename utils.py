@@ -3,8 +3,12 @@ from datetime import datetime
 import cv2
 
 
-def output_image(arr, img_type, output_dir=None):
-    output_file = f'{img_type}_{datetime.now().strftime("%Y%m%d%H%M%S")}.png'
+def output_image(arr, stem, output_dir=None, with_suffix=True):
+    if with_suffix:
+        now = datetime.now()
+        stem = f'{stem}_{now.strftime("%Y%m%d%H%M%S")}'
+
+    output_file = f'{stem}.png'
 
     if output_dir is not None:
         output_file = f'{output_dir}/{output_file}'

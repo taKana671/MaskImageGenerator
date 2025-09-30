@@ -26,7 +26,8 @@ class Circles(ShapeMask):
 
     @staticmethod
     def output_image(bg_color, circlr_color, height=256, width=256, radius=50,
-                     thickness=-1, circle_center=None, gaussian_kernel=None):
+                     thickness=-1, circle_center=None, gaussian_kernel=None,
+                     output_dir=None, with_suffix=True):
         generator = Circles(bg_color, height, width)
         img = generator.create_bg_image()
         generator.create_circle(img, circlr_color, radius, thickness, circle_center)
@@ -36,7 +37,7 @@ class Circles(ShapeMask):
 
         # change rgb to bgr.
         img = generator.change_rgb_to_bgr(img)
-        output_image(img, 'circle')
+        output_image(img, 'circle', output_dir, with_suffix)
 
 
 class CircleMask(Circles):
@@ -63,7 +64,8 @@ class CircleMask(Circles):
 
     @staticmethod
     def output_image(height=256, width=256, radius=50, thickness=-1,
-                     circle_center=None, gaussian_kernel=51, white_circle=True):
+                     circle_center=None, gaussian_kernel=51, white_circle=True,
+                     output_dir=None, with_suffix=True):
         generator = CircleMask(height, width, white_circle)
         img = generator.create_bg_image()
         generator.create_circle(img, radius, thickness, circle_center)
@@ -71,7 +73,7 @@ class CircleMask(Circles):
         if gaussian_kernel is not None:
             img = generator.blur(img, gaussian_kernel)
 
-        output_image(img, 'circle_mask')
+        output_image(img, 'circle_mask', output_dir, with_suffix)
 
 
 class TransparentCircleMask(Circles):
@@ -99,7 +101,8 @@ class TransparentCircleMask(Circles):
 
     @staticmethod
     def output_image(height=256, width=256, radius=50, thickness=-1, circle_center=None,
-                     gaussian_kernel=51, white_circle=True):
+                     gaussian_kernel=51, white_circle=True,
+                     output_dir=None, with_suffix=True):
         generator = TransparentCircleMask(height, width, white_circle)
         img = generator.create_bg_image()
         generator.create_circle(img, radius, thickness, circle_center)
@@ -107,4 +110,4 @@ class TransparentCircleMask(Circles):
         if gaussian_kernel is not None:
             img = generator.blur(img, gaussian_kernel)
 
-        output_image(img, 'trans_circle_mask')
+        output_image(img, 'trans_circle_mask', output_dir, with_suffix)
